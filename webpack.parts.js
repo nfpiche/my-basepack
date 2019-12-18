@@ -6,8 +6,8 @@ exports.devServer = {
     stats: 'errors-only',
     overlay: true,
     historyApiFallback: true,
-  }
-}
+  },
+};
 
 /* CSS LOADERS */
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -24,13 +24,10 @@ const commonCSS = [
   {
     loader: 'postcss-loader',
     options: {
-      plugins: () => ([
-        require('precss'),
-        require('postcss-preset-env'),
-      ])
+      plugins: () => [require('precss'), require('postcss-preset-env')],
     },
-  }
-]
+  },
+];
 
 exports.loadCSS = ({ include, exclude } = {}) => ({
   module: {
@@ -43,7 +40,7 @@ exports.loadCSS = ({ include, exclude } = {}) => ({
       },
     ],
   },
-})
+});
 
 exports.extractCSS = ({ include, exclude } = {}) => {
   const plugin = new MiniCssExtractPlugin({
@@ -62,13 +59,8 @@ exports.extractCSS = ({ include, exclude } = {}) => {
       ],
     },
     plugins: [plugin],
-  }
-}
-
-const PurgeCSSPlugin = require('purgecss-webpack-plugin')
-exports.purgeCSS = ({ paths }) => ({
-  plugins: [new PurgeCSSPlugin({ paths })],
-})
+  };
+};
 
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const cssnano = require('cssnano');
@@ -81,7 +73,7 @@ exports.minifyCSS = ({ options }) => ({
       canPrint: false,
     }),
   ],
-})
+});
 
 /* JS LOADERS */
 exports.loadJS = ({ include, exclude } = {}) => ({
@@ -95,31 +87,32 @@ exports.loadJS = ({ include, exclude } = {}) => ({
       },
     ],
   },
-})
+});
 
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 exports.minifyJS = () => ({
   optimization: {
     minimizer: [new TerserWebpackPlugin()],
   },
-})
+});
 
 /* GENERAL LOADERS */
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 exports.clean = (path) => ({
   plugins: [new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: path })],
-})
+});
 
 const webpack = require('webpack');
 
 exports.setEnvironmentVariables = (envVars) => {
-  if (!envVars) return
+  if (!envVars) return;
 
-  const env = Object.entries(envVars).reduce((acc, [ key, val ]) => (
-    { ...acc, [`GLOBAL.${key}`]: JSON.stringify(val) }
-  ), {})
+  const env = Object.entries(envVars).reduce(
+    (acc, [key, val]) => ({ ...acc, [`GLOBAL.${key}`]: JSON.stringify(val) }),
+    {},
+  );
 
   return {
     plugins: [new webpack.DefinePlugin(env)],
-  }
-}
+  };
+};

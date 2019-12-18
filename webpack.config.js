@@ -1,5 +1,4 @@
 const path = require('path');
-const glob = require('glob');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const dotenv = require('dotenv');
@@ -33,9 +32,6 @@ const production = merge([
     },
   },
   parts.extractCSS(),
-  parts.purgeCSS({
-    paths: glob.sync(`${PATHS.app}/**/*.js`, { nodir: true }),
-  }),
   parts.clean(PATHS.build),
   parts.minifyJS(),
   parts.minifyCSS({
