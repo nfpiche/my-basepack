@@ -11,6 +11,12 @@ exports.devServer = {
 
 /* CSS LOADERS */
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
+const cssnano = require('cssnano');
+const postcssPresetEnv = require('postcss-preset-env');
+const precss = require('precss');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const commonCSS = [
   {
@@ -24,7 +30,7 @@ const commonCSS = [
   {
     loader: 'postcss-loader',
     options: {
-      plugins: () => [require('precss'), require('postcss-preset-env')],
+      plugins: () => [precss, postcssPresetEnv],
     },
   },
 ];
@@ -62,9 +68,6 @@ exports.extractCSS = ({ include, exclude } = {}) => {
   };
 };
 
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const cssnano = require('cssnano');
-
 exports.minifyCSS = ({ options }) => ({
   plugins: [
     new OptimizeCSSAssetsPlugin({
@@ -89,7 +92,6 @@ exports.loadJS = ({ include, exclude } = {}) => ({
   },
 });
 
-const TerserWebpackPlugin = require('terser-webpack-plugin');
 exports.minifyJS = () => ({
   optimization: {
     minimizer: [new TerserWebpackPlugin()],
@@ -97,7 +99,6 @@ exports.minifyJS = () => ({
 });
 
 /* GENERAL LOADERS */
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 exports.clean = (path) => ({
   plugins: [new CleanWebpackPlugin({ cleanOnceBeforeBuildPatterns: path })],
 });
@@ -105,7 +106,7 @@ exports.clean = (path) => ({
 const webpack = require('webpack');
 
 exports.setEnvironmentVariables = (envVars) => {
-  if (!envVars) return;
+  if (!envVars) return {};
 
   const env = Object.entries(envVars).reduce(
     (acc, [key, val]) => ({ ...acc, [`GLOBAL.${key}`]: JSON.stringify(val) }),
