@@ -10,7 +10,7 @@ const parts = require("./webpack.parts");
 
 const PATHS = {
   app: path.join(__dirname, "src"),
-  build: path.join(__dirname, "dist")
+  build: path.join(__dirname, "dist"),
 };
 
 const envPath = path.join(__dirname, `.env.${process.env.NODE_ENV}`);
@@ -18,18 +18,14 @@ const envVars = dotenv.config({ path: envPath }).parsed;
 
 const production = merge([
   {
-    entry: [
-      require.resolve("core-js/stable"),
-      require.resolve("regenerator-runtime/runtime"),
-      PATHS.app
-    ]
+    entry: [ PATHS.app ],
   },
   {
     output: {
       chunkFilename: "[name].[chunkhash:8].js",
       filename: "[name].[chunkhash:8].js",
-      publicPath: process.env.PUBLIC_PATH
-    }
+      publicPath: process.env.PUBLIC_PATH,
+    },
   },
   parts.extractCSS(),
   parts.clean(PATHS.build),
@@ -37,37 +33,37 @@ const production = merge([
   parts.minifyCSS({
     options: {
       discardComments: {
-        removeAll: false
+        removeAll: false,
       },
-      safe: true
-    }
+      safe: true,
+    },
   }),
   {
     optimization: {
       splitChunks: {
-        chunks: "initial"
+        chunks: "initial",
       },
       runtimeChunk: {
-        name: "manifest"
-      }
-    }
+        name: "manifest",
+      },
+    },
   },
   {
-    plugins: [new InlineManifestWebpackPlugin("manifest")]
-  }
+    plugins: [new InlineManifestWebpackPlugin("manifest")],
+  },
 ]);
 
 const development = merge([
   parts.devServer,
   parts.loadCSS(),
   {
-    plugins: [new webpack.HotModuleReplacementPlugin()]
-  }
+    plugins: [new webpack.HotModuleReplacementPlugin()],
+  },
 ]);
 
 const envs = {
   production,
-  development
+  development,
 };
 
 module.exports = (mode, opts = {}) => {
@@ -77,14 +73,14 @@ module.exports = (mode, opts = {}) => {
         new HtmlWebpackPlugin({
           title: "BASEPACK",
           template: path.join(__dirname, "src/index.html"),
-          ...envVars
-        })
-      ]
+          ...envVars,
+        }),
+      ],
     },
     parts.loadJS({ include: PATHS.app }),
     parts.setEnvironmentVariables(envVars),
-    opts.shouldAnalyze ? { plugins: [new BundleAnalyzerPlugin()] } : {}
+    opts.env && opts.env.shouldAnalyze ? { plugins: [new BundleAnalyzerPlugin()] } : {},
   ]);
 
-  return merge(common, envs[mode], { mode });
+  return merge(common, envs[opts.mode], { mode: opts.mode });
 };

@@ -5,14 +5,15 @@ module.exports = {
     jest: true,
   },
   extends: [
-    'plugin:react/recommended',
-    'airbnb',
-    'plugin:jsx-a11y/recommended',
-    'plugin:promise/recommended',
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:promise/recommended",
+    "plugin:react-hooks/recommended",
   ],
   globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
+    Atomics: "readonly",
+    SharedArrayBuffer: "readonly",
     GLOBAL: true,
   },
   parserOptions: {
@@ -20,17 +21,11 @@ module.exports = {
       jsx: true,
     },
     ecmaVersion: 2018,
-    sourceType: 'module',
+    sourceType: "module",
   },
-  plugins: ['react'],
+  plugins: ["react", "prettier", "jsx-a11y"],
   rules: {
-    'react/jsx-filename-extension': [0],
-    'react/jsx-one-expression-per-line': [0],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: true,
-      },
-    ],
+    "react/jsx-filename-extension": [0],
+    "react/jsx-one-expression-per-line": [0],
   },
 };
